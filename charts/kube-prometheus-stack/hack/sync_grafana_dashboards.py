@@ -27,30 +27,30 @@ def change_style(style, representer):
 charts = [
     {
         'source': 'https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/master/manifests/grafana-dashboardDefinitions.yaml',
-        'destination': '../templates/grafana/dashboards-1.14',
+        'destination': '../templates/dashboards-1.14',
         'type': 'yaml',
         'min_kubernetes': '1.14.0-0'
     },
     {
         'source': 'https://raw.githubusercontent.com/etcd-io/etcd/master/Documentation/op-guide/grafana.json',
-        'destination': '../templates/grafana/dashboards-1.14',
+        'destination': '../templates/dashboards-1.14',
         'type': 'json',
         'min_kubernetes': '1.14.0-0'
     },
-    {
-        'source': 'https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/release-0.1/manifests/grafana-dashboardDefinitions.yaml',
-        'destination': '../templates/grafana/dashboards',
-        'type': 'yaml',
-        'min_kubernetes': '1.10.0-0',
-        'max_kubernetes': '1.14.0-0'
-    },
-    {
-        'source': 'https://raw.githubusercontent.com/etcd-io/etcd/master/Documentation/op-guide/grafana.json',
-        'destination': '../templates/grafana/dashboards',
-        'type': 'json',
-        'min_kubernetes': '1.10.0-0',
-        'max_kubernetes': '1.14.0-0'
-    },
+    # {
+        # 'source': 'https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/release-0.1/manifests/grafana-dashboardDefinitions.yaml',
+        # 'destination': '../templates/dashboards',
+        # 'type': 'yaml',
+        # 'min_kubernetes': '1.10.0-0',
+        # 'max_kubernetes': '1.14.0-0'
+    # },
+    # {
+        # 'source': 'https://raw.githubusercontent.com/etcd-io/etcd/master/Documentation/op-guide/grafana.json',
+        # 'destination': '../templates/dashboards',
+        # 'type': 'json',
+        # 'min_kubernetes': '1.10.0-0',
+        # 'max_kubernetes': '1.14.0-0'
+    # },
 ]
 
 # Additional conditions map
@@ -77,7 +77,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ printf "%%s-%%s" {{ .Release.Name }} "%(name)s" | trunc 63 | trimSuffix "-" }}
+  name: {{ printf "%%s-%%s" .Release.Name "%(name)s" | trunc 63 | trimSuffix "-" }}
   labels:
     grafana_dashboard: "1"
     app: {{ .Release.Name }}-grafana
