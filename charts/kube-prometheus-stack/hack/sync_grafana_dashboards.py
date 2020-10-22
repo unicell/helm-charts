@@ -73,20 +73,14 @@ Generated from '%(name)s' from %(url)s
 Do not change in-place! In order to change this file first read following link:
 https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack/hack
 */ -}}
-{{- $kubeTargetVersion := default .Capabilities.KubeVersion.GitVersion .Values.kubeTargetVersionOverride }}
-{{- if and (semverCompare ">=%(min_kubernetes)s" $kubeTargetVersion) (semverCompare "<%(max_kubernetes)s" $kubeTargetVersion) .Values.grafana.enabled .Values.grafana.defaultDashboardsEnabled%(condition)s }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: {{ template "kube-prometheus-stack.namespace" . }}
-  name: {{ printf "%%s-%%s" (include "kube-prometheus-stack.fullname" $) "%(name)s" | trunc 63 | trimSuffix "-" }}
-  annotations:
-{{ toYaml .Values.grafana.sidecar.dashboards.annotations | indent 4 }}
+  namespace: {{ .Release.Namespace }}
+  name: {{ printf "%%s-%%s" {{ .Release.Name }} "%(name)s" | trunc 63 | trimSuffix "-" }}
   labels:
-    {{- if $.Values.grafana.sidecar.dashboards.label }}
-    {{ $.Values.grafana.sidecar.dashboards.label }}: "1"
-    {{- end }}
-    app: {{ template "kube-prometheus-stack.name" $ }}-grafana
+    grafana_dashboard: "1"
+    app: {{ .Release.Name }}-grafana
 {{ include "kube-prometheus-stack.labels" $ | indent 4 }}
 data:
 '''
@@ -126,9 +120,6 @@ def write_group_to_file(resource_name, content, url, destination, min_kubernetes
     filename_struct = {resource_name + '.json': (LiteralStr(content))}
     # rules themselves
     lines += yaml_str_repr(filename_struct)
-
-    # footer
-    lines += '{{- end }}'
 
     filename = resource_name + '.yaml'
     new_filename = "%s/%s" % (destination, filename)
